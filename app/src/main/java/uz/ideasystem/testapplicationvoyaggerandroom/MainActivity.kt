@@ -38,6 +38,7 @@ import cafe.adriel.voyager.navigator.tab.CurrentTab
 import cafe.adriel.voyager.navigator.tab.LocalTabNavigator
 import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabNavigator
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import kotlinx.coroutines.launch
 import uz.ideasystem.testapplicationvoyaggerandroom.models.drawableItem.Drawable
 import uz.ideasystem.testapplicationvoyaggerandroom.screens.DrawableUI
@@ -57,32 +58,20 @@ class MainActivity : ComponentActivity() {
 
             val scaffoldState = rememberScaffoldState()
             val coroutineScope = rememberCoroutineScope()
+            val systemUiController = rememberSystemUiController()
+
+            systemUiController.setSystemBarsColor(color = Purple40)
+
             TabNavigator(tab = HomeScreen){ tabNavigator->
                 androidx.compose.material.Scaffold(
                     content = {
                        CurrentTab()
                     },
                     topBar = {
-                        TopAppBar(
-                            title = {Text(tabNavigator.current.options.title, color = Color.White)},
-                            contentColor = contentColorFor(backgroundColor = Purple80),
-                            backgroundColor = Purple40,
-                            navigationIcon = {
-                                if (tabNavigator.current == HomeScreen){
-                                    androidx.compose.material.IconButton(onClick = {
-                                        coroutineScope.launch { scaffoldState.drawerState.open() }
-                                    }) {
-                                        Icon(Icons.Filled.Menu , "backIcon", tint = Color.White)
-                                    }
-                                } else {
-                                    androidx.compose.material.IconButton(onClick = {
-                                        tabNavigator.current = HomeScreen
-                                    }) {
-                                        Icon(Icons.Filled.ArrowBack , "backIcon", tint = Color.White)
-                                    }
-                                }
-                            }
-                        )
+                        uz.ideasystem.testapplicationvoyaggerandroom.ui.topAppbar.TopAppBar(
+                            scaffoldState = scaffoldState,
+                            coroutineScope = coroutineScope,
+                            tabNavigator = tabNavigator)
                     },
                     drawerContent = {
                         DrawableUI(scope = coroutineScope,scaffoldState, getDrawerLis())
